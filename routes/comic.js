@@ -2,6 +2,10 @@ const request = require("request");
 const express = require("express");
 const router = express.Router();
 
+/*
+ * Fetches the number of the latest XKCD comic
+ * @param {function(int)} callback - A callback function to call after the latest comic has been fetched.
+ */
 function getLatest(callback) {
     "use strict";
     const addr = "https://xkcd.com/info.0.json";
@@ -16,6 +20,14 @@ function getLatest(callback) {
     });
 }
 
+/*
+ * Iterative function that fetches the details for `limit` unique random comics
+ * @param {int} max - The latest comic that can fetched
+ * @param {int} limit - The number of unique comics to be fetched
+ * @param {function(array)} callback - A callback function to call after fetching enough comics
+ * @param {array} comics - The comic details fetched so far
+ * @param {array} chosen - The comic numbers that have already been included in `comics`
+ */
 function getRandomComics(max, limit = 1, callback, comics = [], chosen = []) {
     if (chosen.length >= limit) {
         callback(comics);
@@ -46,9 +58,18 @@ function getRandomComics(max, limit = 1, callback, comics = [], chosen = []) {
     });
 }
 
-/* GET users listing. */
+/* GET JSON array of details for up to {limit} random XKCD comics */
 router.get("/random/:limit", function (req, res) {
     "use strict";
+    let limit = req.params.limit;
+    if (Number.isNaN(limit) || limit < 1) {
+        res.status(400);
+        res.json({
+            success: false,
+            error: "Invalid limit given"
+        });
+        return;
+    }
     getLatest(function (latestNum) {
         if (latestNum === 0) {
             res.status(500);
@@ -58,12 +79,16 @@ router.get("/random/:limit", function (req, res) {
             });
             return;
         }
-        getRandomComics(latestNum, req.params.limit, function onGetRandomComics(comics) {
+        if (latestNum < limit) {
+            limit = latestNum;
+        }
+        getRandomComics(latestNum, limit, function onGetRandomComics(comics) {
             res.json({comics});
         });
     });
 });
 
+/* GET associated image from XKCD for comic {num} */
 router.get("/image/:num", function (req, res) {
     "use strict";
     request(`https://xkcd.com/${req.params.num}/info.0.json`, {json: true}, function onGetComic(err, ignore, body) {
