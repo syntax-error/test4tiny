@@ -1,0 +1,67 @@
+body {
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+#modal {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,.8);
+    z-index: 200;
+    display: none;
+    padding-top: 100px;
+    overflow: scroll;
+    cursor: pointer;
+}
+
+#modal img {
+    cursor: default;
+    margin-bottom: 100px;
+}
+
+#comic-container {
+    display: flex;
+    max-width: 920px;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    margin: 0 auto;
+}
+
+.comic {
+    position: relative;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    width: 100%;
+    max-width: 298px;
+    border: 1px black solid;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.comic:before {
+    content: '';
+    float: left;
+    padding-top: 100%;
+}
+
+.title-bar {
+    background: rgba(255,255,255, 0.9);
+    padding: 10px 0px;
+    text-align: center;
+    width: 100%;
+    position: absolute;
+    bottom: 10px;
+    border: 1px solid black;
+    margin-left: -1px;
+}
+
+.title-bar .num {
+    font-weight: bold;
+}
